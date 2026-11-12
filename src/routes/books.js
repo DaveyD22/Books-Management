@@ -32,4 +32,39 @@ router.get("/:id", async (req, res)=>{
     }
 })
 
+router.post("/", async (req, res)=>{
+    try {
+        const {title, author, year} = req.body
+        if (!title){
+            return res.status(404).json({
+                message: "no title"
+            })
+        }
+        if (!author){
+            return res.status(404).json({
+                message: "no author"
+            })
+        }
+        if (year === undefined || year > new Date().getFullYear()){
+            return res.status(404).json({
+                message: "no year"
+            })
+        }
+
+        await db.insert(books).values({
+            title: title,
+            author: author,
+            year: year,
+        })
+
+        return res.status(201).json({
+            message: "created succesfully"
+        })
+
+        
+    } catch (err) {
+        return ErrorHandler(res, err)
+    }
+})
+
 module.exports = router;
